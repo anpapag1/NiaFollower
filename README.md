@@ -7,8 +7,6 @@ This project involves building a line-following robot using an ESP32 microcontro
 >- Stavros Stavridis
 >- Fotis Korakis
 >- Konstantinos Diamantidis
->
-> .
 
 
 ## Features
