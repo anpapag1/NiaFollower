@@ -44,7 +44,7 @@ CRGB leds[NUM_LEDS];
 
 // Sensor configuration
 QTRSensors qtr;
-const uint8_t SensorCount = 8;
+const uint8_t SensorCount = 6;
 uint16_t sensorValues[SensorCount];
 
 // PID variables
@@ -149,7 +149,7 @@ void loop() {
     motor_drive(baseSpeed - direction, baseSpeed + direction);
   } else {
     position = readLine(position, 4090);
-    error = 3500 - position;
+    error = SensorCount / 2 * 1000 - position;
     PID_Linefollow(error);
   }
 }
@@ -270,18 +270,30 @@ int readLine(int lastposition, int blackLineValue) {
       position += i * 1000;
     }
   }
-
-  if (count == 8) {
+  
+  if (count == SensorCount) {
     robotEnabled = false;
+    position = 0;
   } else if (count != 0) {
     position = position / count;
   } else {
-    if (lastposition > 3500) {
-      position = 7000;
+    if (lastposition > SensorCount / 2) {
+      position = SensorCount * 1000;
     } else {
       position = 0;
     }
   }
+  // debug
+  // for (uint8_t i = 0; i < SensorCount; i++) {
+  //   if (sensorValues[i] > blackLineValue) {
+  //     Serial.print("▢");
+  //   } else {
+  //     Serial.print("_");
+  //   }
+  // }
+  // Serial.print("\t");
+  // Serial.print("position: ");
+  Serial.println(position);
 
   return position;
 }
@@ -290,7 +302,7 @@ void motor_drive(int right, int left) {
   // Control motor movement
   digitalWrite(STBY, robotEnabled ? HIGH : LOW);
 
-  if (position < 7000 || PIDvalue == 0) {
+  if (position < SensorCount-1 * 1000 || PIDvalue == 0) {
     if (right > 0) {
       analogWrite(AIN1, right);
       analogWrite(AIN2, 0);
@@ -323,7 +335,7 @@ void updateLEDs(uint8_t state) {
     fill_solid(leds, NUM_LEDS, CRGB::Black);
   } else if (state == 1) {
     if (robotEnabled) {
-      if (0 < position && position < 7000) {
+      if (0 < position && position < SensorCount * 1000) {
         fill_solid(leds, NUM_LEDS, CRGB::Green);
       } else {
         fill_solid(leds, NUM_LEDS, CRGB::Red);
