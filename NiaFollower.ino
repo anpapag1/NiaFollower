@@ -159,6 +159,7 @@ void processCommand(String command) {
   if (command.length() < 1) return;
 
   char cmd = command.charAt(0);
+  // Serial.println(command);
   float value = 0;
 
   if (command.length() > 1) {
@@ -193,11 +194,16 @@ void processCommand(String command) {
       manualControl = bool(value);
       Serial.println("Manual control " + String(manualControl ? "enabled" : "disabled"));
       break;
-    case 'd': // Set speed and direction
+    case 'r': // Set speed and direction
       baseSpeed = command.substring(1, 4).toInt();
-      baseSpeed -= 150;
+      baseSpeed = map(baseSpeed, 0, 300, -200, 200);
       direction = command.substring(4, 7).toInt();
-      direction -= 130;
+      direction = map(direction, 70, 330, -70, 70);
+      direction = pow(direction / 70.0, 3) * 70; // Make direction exponential
+      if (baseSpeed < -10) direction = -direction;
+      Serial.print(baseSpeed);
+      Serial.print("\t");
+      Serial.println(direction);
       break;
     case 'l': // Change LED state
       ledState = (ledState + 1) % 3;
