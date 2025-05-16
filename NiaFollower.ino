@@ -44,7 +44,7 @@ CRGB leds[NUM_LEDS];
 
 // Sensor configuration
 QTRSensors qtr;
-const uint8_t SensorCount = 6;
+const uint8_t SensorCount = 8;
 uint16_t sensorValues[SensorCount];
 
 // PID variables
@@ -101,7 +101,7 @@ void setup() {
 
   // Configure sensors
   qtr.setTypeAnalog();
-  qtr.setSensorPins((const uint8_t[]){ 26, 25, 33, 32, 35, 34, 39, 36}, SensorCount);
+  qtr.setSensorPins((const uint8_t[]){26, 25, 33, 32, 35, 34, 39, 36}, SensorCount);
   qtr.setEmitterPin(27);
 
   // Display help message
@@ -200,7 +200,6 @@ void processCommand(String command) {
       direction = command.substring(4, 7).toInt();
       direction = map(direction, 70, 330, -70, 70);
       direction = pow(direction / 70.0, 3) * 70; // Make direction exponential
-      if (baseSpeed < -10) direction = -direction;
       Serial.print(baseSpeed);
       Serial.print("\t");
       Serial.println(direction);
@@ -293,7 +292,7 @@ int readLine(int lastposition, int blackLineValue) {
   // }
   // Serial.print("\t");
   // Serial.print("position: ");
-  Serial.println(position);
+  // Serial.println(position);
 
   return position;
 }
